@@ -18,7 +18,7 @@ biopython==1.83
 bleach==6.1.0
 boto3==1.37.38
 botocore==1.37.38
-causal_conv1d @ file:///home/HPCBase/PACKAGE/whl/mamba/cuda11.8/causal_conv1d-1.4.0-cp38-cp38-linux_aarch64.whl#sha256=c851ae54b18757e99a561267e2681608a11ce0276617261076c6429c2af4353f
+# causal_conv1d @ file:///home/HPCBase/PACKAGE/whl/mamba/cuda11.8/causal_conv1d-1.4.0-cp38-cp38-linux_aarch64.whl#sha256=c851ae54b18757e99a561267e2681608a11ce0276617261076c6429c2af4353f
 certifi==2024.2.2
 cffi==1.17.1
 chardet==5.2.0
@@ -35,7 +35,7 @@ decorator==5.1.1
 defusedxml==0.7.1
 dill==0.3.8
 docker-pycreds==0.4.0
-dropout-layer-norm @ file:///home/share/huadjyin/home/s_sukui/flash-attention-2.5.6/csrc/layer_norm
+# dropout-layer-norm @ file:///home/share/huadjyin/home/s_sukui/flash-attention-2.5.6/csrc/layer_norm
 einops==0.7.0
 et_xmlfile==2.0.0
 evo-model==0.1.1
@@ -43,7 +43,7 @@ exceptiongroup==1.2.2
 executing==2.1.0
 fastjsonschema==2.20.0
 filelock==3.13.1
-flash-attn @ file:///home/HPCBase/PACKAGE/whl/flash-attn/flash_attn-2.5.6-cp38-cp38-linux_aarch64.whl#sha256=3cac7cffe2b73c4b6dce669821529b83f63076c4a46e10e051c51e7c5f6c286c
+# flash-attn==2.5.6
 fonttools==4.53.0
 fqdn==1.5.1
 frozenlist==1.4.1
@@ -52,7 +52,7 @@ gdown==5.2.0
 genomic-benchmarks==0.0.9
 gitdb==4.0.11
 GitPython==3.1.43
-gmpy2 @ file:///opt/conda/conda-bld/gmpy2_1645462236732/work
+gmpy2==2.1.2
 h11==0.14.0
 httpcore==1.0.6
 httpx==0.27.2
@@ -87,7 +87,7 @@ jupyterlab_server==2.27.3
 jupyterlab_widgets==3.0.13
 kiwisolver==1.4.5
 llvmlite==0.41.1
-mamba_ssm @ file:///home/HPCBase/PACKAGE/whl/mamba/cuda11.8/mamba_ssm-2.2.2-cp38-cp38-linux_aarch64.whl#sha256=2869f5f042f267337522810e3ae92117eb63941b89790675140a222ba4c71d28
+# mamba_ssm @ file:///home/HPCBase/PACKAGE/whl/mamba/cuda11.8/mamba_ssm-2.2.2-cp38-cp38-linux_aarch64.whl#sha256=2869f5f042f267337522810e3ae92117eb63941b89790675140a222ba4c71d28
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.7.5
@@ -95,7 +95,7 @@ matplotlib-inline==0.1.7
 mdurl==0.1.2
 memory-profiler==0.61.0
 mistune==3.0.2
-mpmath @ file:///croot/mpmath_1690848254306/work
+mpmath==1.3.0
 multidict==6.0.5
 multiprocess==0.70.16
 nbclient==0.10.0
@@ -111,8 +111,7 @@ numpy==1.24.4
 omegaconf==2.3.0
 openpyxl==3.1.5
 overrides==7.7.0
-packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1710075952259/work
-pandas @ file:///home/share/huadjyin/home/s_liulin4/software/pandas-2.0.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl#sha256=258d3624b3ae734490e4d63c430256e716f488c4fcb7c8e9bde2d3aa46c29089
+pandas==2.0.3
 pandocfilters==1.5.1
 parso==0.8.4
 peft==0.11.1
@@ -125,7 +124,7 @@ prettytable==3.11.0
 prometheus_client==0.21.0
 prompt_toolkit==3.0.48
 protobuf==4.25.3
-psutil @ file:///home/conda/feedstock_root/build_artifacts/psutil_1705722439153/work
+psutil==5.9.8
 ptyprocess==0.7.0
 pure_eval==0.2.3
 pyarrow==16.0.0
@@ -157,14 +156,14 @@ rpds-py==0.20.0
 s3transfer==0.11.5
 safetensors==0.4.5
 scikit-learn==1.3.2
-scikit-misc @ file:///home/HPCBase/PACKAGE/whl/scikit-misc/scikit_misc-0.2.0-cp38-cp38-linux_aarch64.whl#sha256=439d75c80909fbc688ffb90e7fd0a221c5d166073b74a79d100423cda6f8065e
+scikit-misc==0.2.0
 scipy==1.10.1
 seaborn==0.13.2
 Send2Trash==1.8.3
 sentencepiece==0.2.0
 sentry-sdk==2.2.0
 setproctitle==1.3.3
-shap==0.44.1
+# shap==0.44.1
 simplejson==3.20.1
 six==1.16.0
 slicer==0.0.7
@@ -174,28 +173,28 @@ soupsieve==2.5
 stack-data==0.6.3
 stripedhyena==0.2.2
 swankit==0.2.0
-swanlab==0.6.0
-sympy @ file:///croot/sympy_1668202396287/work
+# swanlab==0.6.0
+sympy==1.11.1
 terminado==0.18.1
 threadpoolctl==3.5.0
 tinycss2==1.3.0
 tokenizers==0.20.0
 tomli==2.0.2
-torch @ file:///home/HPCBase/PACKAGE/whl/pytorch/2.0%2Bcu118_cp38/torch-2.0.0a0%2Bgitunknown-cp38-cp38-linux_aarch64.whl#sha256=1a77e26e41045441a1e1da37e788e2d7b63f9fd72bc719c9400e8c467de8e200
-torchaudio @ file:///home/share/huadjyin/software/whl/torchaudio-0.11.0-cp38-cp38-linux_aarch64.whl#sha256=5a044cfacc00d6b530936cfbcb3e68f703bb47384c525e36917ec1def8bf078c
+# torch==2.0+cu118
+torchaudio==2.0.2
 torchsummary==1.5.1
-torchvision @ file:///home/share/huadjyin/software/whl/torchvision-0.12.0%2Bcu113-cp38-cp38-linux_aarch64.whl#sha256=1c4fa80fcfa91afeb163f764364eb606da6ba8f63ee3359aba523298859eb1d4
+torchvision==0.15.2
 tornado==6.4.1
 tqdm==4.66.2
 traitlets==5.14.3
 transformers==4.45.1
-triton @ file:///home/HPCBase/PACKAGE/whl/triton/triton-2.1.0-cp38-cp38-linux_aarch64.whl#sha256=ba45823e3afee37cd8eccdd64323023c019b01ca3093b76483bfd7dc4dc63e8e
+# triton==2.1.0
 types-python-dateutil==2.9.0.20241003
 typing_extensions==4.13.2
 tzdata==2024.1
 uri-template==1.3.0
 urllib3==1.26.20
-wandb==0.17.0
+# wandb==0.17.0
 wcwidth==0.2.13
 webcolors==24.8.0
 webencodings==0.5.1

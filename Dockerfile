@@ -1,32 +1,23 @@
-# 基于官方 Python 镜像
-FROM python:3.8-slim
-
-# 设置工作目录
+FROM python:3.8-slim AS builder
 WORKDIR /app
 
-# 安装必要的系统依赖
-RUN apt-get update && apt-get install -y git
+RUN apt-get update
 
-# 复制项目文件到工作目录
 COPY . /app
+# RUN pip install packaging==24.0 && pip install ninja -f https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 安装 Python 依赖
-RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install torch==2.0.0 -i https://download.pytorch.org/whl/cu118
+# RUN pip install triton==2.1.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install torch==2.0.1 -f https://mirrors.aliyun.com/pytorch-wheels/cu118 --timeout 999999999
+# RUN pip install numpy==1.24.4 -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 下载模型权重（如果模型权重较大，建议使用多阶段构建或在运行时挂载）
-RUN mkdir -p model_weights/NT_50M && \
-    mkdir -p model_weights/EVO_7B && \
-    git clone https://github.com/sunhaotong0605/SPP_FMRESAC.git /app && \
-    # 下载 NT_50M 权重
-    wget -P model_weights/NT_50M/ <NT_50M_WEIGHT_URL> && \
-    # 下载 EVO_7B 权重
-    wget -P model_weights/EVO_7B/ <EVO_7B_WEIGHT_URL>
+RUN pip install flash_attn-2.5.6+cu118torch2.0cxx11abiFALSE-cp38-cp38-linux_x86_64.whl --timeout 999999999
+RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --timeout 999999999
 
-# 设置环境变量
-ENV PATH="/app:${PATH}"
+# # 下载模型权重（替换为实际的模型权重下载链接）
+# RUN wget -P model_weights/NT_50M/ <NT_50M_WEIGHT_URL> && \
+#     wget -P model_weights/EVO_7B/ <EVO_7B_WEIGHT_URL>
 
-# 暴露端口（如果需要）
-# EXPOSE 8080
 
-# 设置默认命令
-CMD ["python", "main.py"]
+
+CMD ["python", "main.py", "model_name=xxx", "input_path=xxx", "output_path=xxx"]

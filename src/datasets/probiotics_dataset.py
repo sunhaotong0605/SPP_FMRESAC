@@ -10,6 +10,7 @@ import pandas as pd
 import torch
 import tqdm
 from torch.utils.data import Dataset
+from torch.nn.utils.rnn import pad_sequence
 from transformers import PreTrainedTokenizerBase, DataCollatorWithPadding
 from Bio import SeqIO
 from sklearn.ensemble import RandomForestClassifier
@@ -38,6 +39,8 @@ class ProbioticDataset(Dataset):
 
         with open(data_path, "r") as f:
             data = f.read().split("\n")
+        if len(data[-1]) == 0:
+            data = data[:-1]
 
         # sample.txt
         self.data_path = data_path
@@ -192,7 +195,42 @@ class ProbioticEnhanceRepresentationDataset(Dataset):
 
         return {"seqs_labels": batch_label, "manual_feature": manual_feature, "embedding": embedding}
 
-            
+    def _data_collator(self, batch):
+        seqs_labels = [item["seqs_labels"] for item in batch]
+        manual_features = [torch.tensor(item["manual_feature"]) for item in batch]
+        embeddings = [torch.tensor(item["embedding"]) for item in batch]
+
+        # for index in range(len(embeddings)):
+        #     seqs_labels[index] = torch.tensor([seqs_labels[index]]*embeddings[index].shape[0])
+
+        max_manual_len = max([mf.shape[0] for mf in manual_features])
+        max_embedding_len = max([emb.shape[0] for emb in embeddings])
+
+        manual_features_padded = pad_sequence(
+            [torch.cat((mf, torch.zeros(max_manual_len - mf.shape[0], mf.shape[1]))) for mf in manual_features],
+            batch_first=True
+        )
+        manual_feature_masks = torch.tensor([[1] * len(mf) + [0] * (max_manual_len - len(mf)) for mf in manual_features])
+        manual_feature_masks = manual_feature_masks.unsqueeze(-1)
+        manual_feature_masks = manual_feature_masks.repeat(1, 1, 132)
+
+        embeddings_padded = pad_sequence(
+            [torch.cat((emb, torch.zeros(max_embedding_len - emb.shape[0], emb.shape[1]))) for emb in embeddings],
+            batch_first=True
+        )
+
+        seqs_labels_padded = pad_sequence(
+            [torch.cat((torch.tensor(sl), torch.full([max_embedding_len - sl.shape[0]], -100))) for sl in seqs_labels],
+            batch_first=True
+        ).long()
+
+        return {
+            "seqs_labels": seqs_labels_padded,
+            "manual_feature": manual_features_padded,
+            "manual_feature_mask": manual_feature_masks,
+            "embedding": embeddings_padded,
+        }
+
 
 class ProbioticSplitEnhanceRepresentationDataset(Dataset):
     def __init__(
@@ -201,6 +239,8 @@ class ProbioticSplitEnhanceRepresentationDataset(Dataset):
             manual_feature,
             embedding,
             seed: int = 42,
+            hidden_size: int = 132,
+            strategy: str = "cross_attention",
             **kwargs
     ):
         super(ProbioticSplitEnhanceRepresentationDataset, self).__init__()
@@ -210,23 +250,27 @@ class ProbioticSplitEnhanceRepresentationDataset(Dataset):
         self.seqs_labels = seqs_labels
         self.manual_feature = manual_feature
         self.embedding = embedding
-        self.pca = KernelPCA(n_components=132, kernel='rbf')
- 
-        # LLM representation and engineering feature global normalization
-        embed_min = np.min(self.embedding)
-        embed_max = np.max(self.embedding)
-        self.embedding = (self.embedding - embed_min) / (embed_max - embed_min)
-        mf_min = np.min(self.manual_feature)
-        mf_max = np.max(self.manual_feature)
-        self.manual_feature = (self.manual_feature - mf_min) / (mf_max - mf_min)
-        
-        # LLM representation dimensionality reduction
-        self.embedding = self.pca.fit_transform(self.embedding)
+        self.pca = KernelPCA(n_components=hidden_size, kernel='rbf')
+        self.strategy = strategy
+    
+        if strategy == "cross_attention" or strategy == "dimension_reduction":
+            # LLM representation and engineering feature global normalization
+            embed_min = np.min(self.embedding)
+            embed_max = np.max(self.embedding)
+            self.embedding = (self.embedding - embed_min) / (embed_max - embed_min)
+            mf_min = np.min(self.manual_feature)
+            mf_max = np.max(self.manual_feature)
+            self.manual_feature = (self.manual_feature - mf_min) / (mf_max - mf_min)
+            
+            # LLM representation dimensionality reduction
+            self.embedding = self.pca.fit_transform(self.embedding)
 
-        # LLM representation global normalization
-        embed_min = np.min(self.embedding)
-        embed_max = np.max(self.embedding)
-        self.embedding = (self.embedding - embed_min) / (embed_max - embed_min)
+            # LLM representation global normalization
+            embed_min = np.min(self.embedding)
+            embed_max = np.max(self.embedding)
+            self.embedding = (self.embedding - embed_min) / (embed_max - embed_min)
+        else:
+            logger.info("Representation enhancement skip norm and dimensionality reduction, strategy: {}".format(strategy))
 
     def __len__(self):
         return len(self.embedding)
@@ -235,14 +279,13 @@ class ProbioticSplitEnhanceRepresentationDataset(Dataset):
         # transform to tensor and add a dimension at 0
         embedding = torch.tensor(self.embedding[idx]).unsqueeze(0)
         manual_feature = torch.tensor(self.manual_feature[idx]).unsqueeze(0)
-
         return {    
-            'labels': self.seqs_labels[0],
+            # 'labels': self.seqs_labels[0],
             "embedding": embedding,
             "manual_feature": manual_feature,
         }
 
-    
+
 class ProbioticsDataProcess:
     def __init__(self, seed=42):
         self.seed = seed
@@ -270,6 +313,53 @@ class ProbioticsDataProcess:
                     short_genomes.append(file_name)
         return short_genomes
 
+    def probiotics_single_sample_data(
+            self,
+            dest_path: str,
+            save_path: str,
+            sample_num: int = -1,
+            name: str = "*",
+            num_bound: Optional[Tuple] = (3000, 7000),
+            len_bound: Optional[Tuple] = (100, 2500),
+            seed: int = 42,
+            short_genomes: List[str] = []
+
+    ):
+        random.seed(seed)
+        assert os.path.exists(dest_path), f"{dest_path} is not exits"
+        os.makedirs(save_path, exist_ok=True)
+
+        file_dirs = glob.glob(os.path.join(dest_path, name))
+        if sample_num != -1:
+            random.shuffle(file_dirs)
+            count = 0
+        for file_dir in tqdm.tqdm(file_dirs):
+            if os.path.basename(file_dir) in short_genomes:
+                continue
+            pkl_path = glob.glob(os.path.join(f"{file_dir}", "*.pkl"))
+            # filter sample by orf nums
+            if num_bound is not None:
+                if len(pkl_path) < num_bound[0] or len(pkl_path) > num_bound[1]:
+                    continue
+            if len_bound is not None:
+                pool = Pool(10)  # use multi-process to speed up
+                valid_pkl = []
+                for pkl in pkl_path:
+                    valid_pkl.append(pool.apply_async(self.filter_pkl, args=(pkl, len_bound[0], len_bound[1],)))
+                pool.close()
+                pool.join()
+                pkl_path = [pkl.get() for pkl in valid_pkl if pkl.get() is not None]
+            else:
+                pkl_path = pkl_path
+            if sample_num != -1:
+                count = count + 1
+                if count == sample_num + 1:
+                    break
+            save_name = os.path.basename(file_dir).rstrip("/") + ".txt"
+            with open(os.path.join(save_path, save_name), "w") as f:
+                for pkl in pkl_path:
+                    f.write(pkl + "\n")
+
 
     def probiotics_get_pickles_txt(
             self,
@@ -288,7 +378,27 @@ class ProbioticsDataProcess:
             for path in glob.glob(f"{pkl_path}/*.pkl"):
                 f.write(path + "\n")
         # logger.info(f"All results saved in {pkl_path}/all.txt")
-
+ 
+    def probiotics_split_trainset(
+            self,
+            dir: str,
+            train1_ratio: float = 0.6,
+            seed: int = 42,
+    ):
+        random.seed(seed)
+        with open(dir + '/pickles.txt', "r") as f:
+            lines = f.readlines()
+        lines = [line.strip() for line in lines if line.strip()]
+        sorted_lines = sorted(lines)
+        train_num = int(len(lines) * train1_ratio)
+        train_lines = sorted_lines[:train_num]
+        with open(dir + '/train1.txt', "w") as f:
+            for line in train_lines:
+                f.write(line+ "\n")
+        with open(dir + '/train2.txt', "w") as f:
+            for line in lines:
+                if line not in train_lines:
+                    f.write(line+ "\n")
 
 if __name__ == '__main__':
     pbt_dp = ProbioticsDataProcess()

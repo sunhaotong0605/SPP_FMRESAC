@@ -2,11 +2,13 @@
 import os
 import pickle
 import tqdm
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import pandas as pd
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from Bio import SeqIO
+
 
 from src.utils.train import print_config, process_config
 from src.self_logger import logger, init_logger 
@@ -29,10 +31,13 @@ def get_cut_sequence(sequence, split_length, overlap_ratio):
             split_list.append((seq, start, end))
     return split_list
 
-def process_file(file_path, save_path, split_length, overlap_ratio, **kwargs):
+def process_file(file_path, save_path, df, split_length, overlap_ratio , **kwargs):
     cut_dict = {}
     # set label to 0
-    cut_dict['label'] = 0
+    if df.empty:
+        cut_dict['label'] = 0
+    else:
+        cut_dict['label'] = int(df[df['sample_name'] == '.'.join(os.path.basename(file_path).split('.')[:-1])]['label'].values)
 
     for record in SeqIO.parse(file_path, "fasta"):
         cut_dict['name'] = record.id
@@ -47,6 +52,10 @@ def process_file(file_path, save_path, split_length, overlap_ratio, **kwargs):
                 pickle.dump(cut_dict, file)
 
 def cut_seq(config: DictConfig):
+    df = pd.DataFrame()
+    if config.label_csv_path != None:
+        df = pd.read_csv(config.label_csv_path)
+        df.columns = ['sample_name', 'label']
     with ThreadPoolExecutor() as executor:
         futures = []
         # if input is a dir
@@ -57,7 +66,7 @@ def cut_seq(config: DictConfig):
                     suffix = '.fna' if file_name.endswith('.fna') else '.fasta'
                     save_path = os.path.join(config.cut_seq.output_path, file_name.split(suffix)[0])
                     os.makedirs(save_path, exist_ok=True)
-                    futures.append(executor.submit(process_file, file_path, save_path, **config.cut_seq))
+                    futures.append(executor.submit(process_file, file_path, save_path, df, **config.cut_seq))
         # if input is a single file
         else:
             futures.append(executor.submit(process_file, config.cut_seq.data_path, config.cut_seq.output_path, **config.cut_seq))

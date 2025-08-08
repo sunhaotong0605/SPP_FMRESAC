@@ -1,0 +1,22 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "调试workflow.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "train.py",
+            "console": "integratedTerminal",
+            "args": [
+                "model_name=NT_50M",
+                "input_path=/home/share/huadjyin/home/s_kangqiang/01_data/Raw_Sequence/Demo/",
+                "label_csv_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test.csv",
+                "output_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test03",
+                // "extract_llmr.dataset.dest_path=/home/share/huadjyin/home/s_kangqiang/04_test_output/Output/",
+            ]
+        },
+    ]
+}

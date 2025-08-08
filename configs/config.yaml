@@ -8,9 +8,11 @@ run_extract_ef: true
 run_extract_llmr: true
 run_enhance_rep: true
 run_ml_predict: true
+run_train_model: true
 
 input_path: null
 output_path: null
+label_csv_path: null
 
 cut_seq:
   data_path: ${input_path}
@@ -21,7 +23,7 @@ cut_seq:
 cut_seq_to_fna:
   data_path: ${input_path}
   output_dir: ${cut_seq.output_dir}
-  output_path: ${cut_seq.output_dir}/Temp/Raw_Split
+  output_path: ${cut_seq.output_dir}/Temp/Raw_split
   split_length: 1000
   overlap_ratio: 0.2
 extract_ef:
@@ -115,6 +117,7 @@ enhance_rep:
       freeze_embedding: true
       pooling: cls # [cls, mean, max, last]
       llm_feature: ${extract_llmr.model._name_}
+      strategy: "cross_attention"
 ml_predict:
   model:
     model_name: XGBClassifier
@@ -148,3 +151,96 @@ ml_predict:
     overwrite_output_dir: false
     save_model: true
     trained_model_path: model_weights/Machine_Learning/
+dimension_reduction:
+  train:
+    seed: 42 
+    do_train: false
+    do_eval: false
+    do_predict: true
+    overwrite_output_dir: false
+    output_dir: ${cut_seq.output_dir}/Temp/Dimension_reduction/${extract_llmr.model._name_}
+    logging_dir: ${cut_seq.output_dir}/Temp/Dimension_reduction/${extract_llmr.model._name_}/logs
+    resume_from_checkpoint: null
+  model:
+    _name_: EnhanceRepresentation
+    strategy: "dimension_reduction"
+    llm_feature: ${extract_llmr.model._name_}
+  dataset:
+    _name_: ProbioticEnhanceRepresentationDataset
+    batch_size: 16
+    dataset_name: ""
+    test_split: pickles
+    llm_rep_path: ${cut_seq.output_dir}/Foundation_model_representations/${extract_llmr.model._name_}
+    ef_path: ${cut_seq.output_dir}/Engineered_features
+train_cross_attn:
+  train:
+    save_safetensors: true
+    gradient_accumulation_steps: 1
+    logging_steps: 500
+    save_steps: 1000
+    learning_rate: 1e-4
+    num_train_epochs: 300
+    seed: 42
+    do_train: true
+    do_eval: true
+    do_predict: true
+    output_dir: ${cut_seq.output_dir}/Model_weights/Cross_Attention/
+    logging_dir: ${cut_seq.output_dir}/Model_weights/Cross_Attention/logs
+    per_device_train_batch_size: ${train_cross_attn.dataset.batch_size}
+    per_device_eval_batch_size: ${train_cross_attn.dataset.batch_size}
+    max_steps: -1
+    run_name: 'train cross attention'
+    logging_strategy: steps # [steps, epoch, no]
+    save_strategy: ${train_cross_attn.train.logging_strategy} # [steps, epoch, no]
+    evaluation_strategy: steps # [steps, epoch, no]
+    metric_for_best_model: loss
+    overwrite_output_dir: false
+    resume_from_checkpoint: null
+    warmup_steps: 100
+  model:
+    _name_: EnhanceRepresentation
+    strategy: "finetune" 
+    llm_feature: ${extract_llmr.model._name_}
+  dataset:
+    _name_: ProbioticEnhanceRepresentationDataset
+    batch_size: 1
+    dataset_name: ""
+    llm_rep_path: ${cut_seq.output_dir}/Temp/Dimension_reduction/${extract_llmr.model._name_}
+    ef_path: ${cut_seq.output_dir}/Temp/Dimension_reduction/Engineered_features
+    only_features: ture
+    train_split: train1
+    val_split: train2
+    test_split: null
+train_ml:
+  model:
+    model_name: XGBClassifier
+    final_model_name: LogisticRegression
+    param_grid: 
+      max_depth: 5
+      learning_rate: 0.2
+      n_estimators: 300
+      C: 0.1
+      penalty: l2
+    cv: 5
+    method: stacked # ['stacked', 'add', 'mean', 'max', 'min', 'median', 'sum']
+    svc_max_iter: -1
+  dataset:
+    name: ProbioticDataset
+    dest_path: ${cut_seq.output_dir}/Enhanced_representations/${extract_llmr.model._name_}
+    dataset_name: ''
+    train_split: train2
+    val_split: null
+    test_split: null
+    split_num: -1
+    train_size: -1
+  train:
+    seed: 42 
+    do_train: true
+    do_eval: false
+    do_predict: false
+    output_dir: ${cut_seq.output_dir}/Model_weights/Machine_Learning
+    logging_dir: ${cut_seq.output_dir}/Model_weights/Machine_Learning/logs
+    resume_from_checkpoint: null
+    overwrite_output_dir: false
+    save_model: true
+    trained_model_path: null

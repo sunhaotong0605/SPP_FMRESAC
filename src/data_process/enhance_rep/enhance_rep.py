@@ -70,6 +70,7 @@ def enhance_rep(config: DictConfig):
                     seqs_labels=sample['seqs_labels'],
                     manual_feature=sample['manual_feature'],
                     embedding=sample['embedding'],
+                    strategy=config.enhance_rep.model.strategy,
                 )
                 pickles_dir = os.path.join(config.enhance_rep.train.output_dir, "pickles")
                 os.makedirs(pickles_dir, exist_ok=True)
@@ -81,15 +82,10 @@ def enhance_rep(config: DictConfig):
                     pass
 
                 prediction_output = trainer.predict(test_dataset)
-                if isinstance(prediction_output.predictions, tuple):
-                    # output tuple with SequenceClassifierOutput
-                    predictions, embeddings = prediction_output.predictions
-                    # after cross attention, the dimension will increase, need to squeeze to reduce the dimension
-                    embeddings = np.squeeze(embeddings)
-                    # embeddings = embeddings.tolist()
-                else:
-                    predictions, embeddings = prediction_output.predictions, None
-                    embeddings = [None for _ in range(len(predictions))]
+                embeddings = prediction_output.predictions
+                # after cross attention, the dimension will increase, need to squeeze to reduce the dimension
+                embeddings = np.squeeze(embeddings)
+                embeddings = embeddings.tolist()
 
                 predict_result = {
                     "sample_name": sample['sample_name'],
@@ -134,7 +130,12 @@ def main(config: OmegaConf):
 
     pbt_dp = ProbioticsDataProcess()
     pbt_dp.probiotics_get_pickles_txt(dir=config.enhance_rep.train.output_dir)
+
+    if os.path.exists(config.dimension_reduction.train.output_dir+'/pickles.txt'):
+        pbt_dp.probiotics_split_trainset(dir=config.enhance_rep.train.output_dir)
+
     logger.info("Representation enhancement completed")
+
 
 if __name__ == '__main__':
     main()

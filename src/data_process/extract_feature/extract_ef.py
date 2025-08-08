@@ -7,7 +7,7 @@ from itertools import product
 from Bio import SeqIO
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+import pandas as pd
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from Bio import SeqIO
@@ -62,14 +62,14 @@ def normalize_ggap_frequencies(dna_sequence, g):
         ggaps_freq.extend(_ggaps_freq)
     return ggaps_freq
 
-def process_file(file_path, config, k):
+def process_file(file_path, config, k, df=None):
     file_name = os.path.basename(file_path)
     suffix = '.fna'
     ORF_dict = {}
     ORF_dict['model_predict'] = {}
     ORF_dict['model_predict']['embedding'] = []
     seqs_num = 0
-
+        
     ORF_dict['sample_name'] = file_name.replace(suffix, '')
     ORF_dict['seqs_paths'] = []
     for record in SeqIO.parse(file_path, "fasta"):
@@ -79,17 +79,25 @@ def process_file(file_path, config, k):
         ORF_dict['model_predict']['embedding'].append(ef_list)
         seqs_num += 1
     # set seqs_labels to 0
-    ORF_dict['seqs_labels'] = np.array([0]*seqs_num)
+    if df.empty:
+        ORF_dict['seqs_labels'] = np.array([0]*seqs_num)
+    else:
+        ORF_dict['seqs_labels'] = np.array([int(df[df['sample_name'] == ORF_dict['sample_name']]['label'].values)]*seqs_num)
+
     output_file_path = os.path.join(config.extract_ef.output_path, file_name.replace(suffix, '.pkl'))
     with open(output_file_path, 'wb') as file:
         pickle.dump(ORF_dict, file)
     return file_name
 
 def extract_ef(config: DictConfig):
+    df = pd.DataFrame()
+    if config.label_csv_path != None:
+        df = pd.read_csv(config.label_csv_path)
+        df.columns = ['sample_name', 'label']
     for k in config.extract_ef.k:
         file_paths = [os.path.join(config.extract_ef.data_path, file_name) for file_name in os.listdir(config.extract_ef.data_path) if file_name.endswith('.fna')]
         with ThreadPoolExecutor() as executor:
-            futures = {executor.submit(process_file, file_path, config, k): file_path for file_path in file_paths}
+            futures = {executor.submit(process_file, file_path, config, k, df): file_path for file_path in file_paths}
             for future in tqdm.tqdm(as_completed(futures), total=len(futures)):
                 try:
                     file_name = future.result()
