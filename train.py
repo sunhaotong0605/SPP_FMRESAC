@@ -17,6 +17,7 @@ from src.data_process.ml_predict import ml_predict
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
 def main(config: OmegaConf):
+    config.output_path = config.output_path.rstrip('/')
     if config.run_train_model:
         cut_seq.main(config)
         cut_seq_to_fna.main(config)
