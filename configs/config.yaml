@@ -13,6 +13,7 @@ run_train_model: true
 input_path: null
 output_path: null
 label_csv_path: null
+pretrained_model_path: null
 
 cut_seq:
   data_path: ${input_path}
@@ -68,7 +69,6 @@ extract_llmr:
     warmup_steps: 100
   model:
     _name_: NTForClassifier
-    pretrained_model_name_or_path: /home/share/huadjyin/home/yinpeng/tnz/NT_model/50M_multi_species_v2/
     num_classes: 2
     hidden_size: null
     freeze_embedding: true
@@ -179,7 +179,7 @@ train_cross_attn:
     logging_steps: 500
     save_steps: 1000
     learning_rate: 1e-4
-    num_train_epochs: 300
+    num_train_epochs: 10
     seed: 42
     do_train: true
     do_eval: true

@@ -124,6 +124,8 @@ def main(config: OmegaConf):
     # set wandb_mode disabled
     os.environ["WANDB_MODE"] = "disabled"
 
+    if config.pretrained_model_path is not None:
+        config.extract_llmr.model.pretrained_model_name_or_path = config.pretrained_model_path
     os.makedirs(config.extract_llmr.dataset.dest_path, exist_ok=True)
     os.makedirs(config.extract_llmr.train.output_dir, exist_ok=True)
     os.makedirs(config.extract_llmr.train.logging_dir, exist_ok=True)

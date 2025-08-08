@@ -13,7 +13,6 @@ from src.data_process.enhance_rep import enhance_rep
 from src.data_process.train import train_cross_attn
 from src.data_process.train import dimension_reduction
 from src.data_process.train import train_ml
-from src.data_process.ml_predict import ml_predict
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
 def main(config: OmegaConf):

@@ -15,6 +15,22 @@
                 "input_path=/home/share/huadjyin/home/s_kangqiang/01_data/Raw_Sequence/Demo/",
                 "label_csv_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test.csv",
                 "output_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test03",
+                "pretrained_model_path=/home/share/huadjyin/home/yinpeng/tnz/NT_model/50M_multi_species_v2/",
+                // "extract_llmr.dataset.dest_path=/home/share/huadjyin/home/s_kangqiang/04_test_output/Output/",
+            ]
+        },
+        {
+            "name": "main.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "model_name=NT_50M",
+                "input_path=/home/share/huadjyin/home/s_kangqiang/01_data/Raw_Sequence/Demo/",
+                // "label_csv_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test.csv",
+                "output_path=/home/share/huadjyin/home/s_kangqiang/trash/365/test02",
+                "pretrained_model_path=/home/share/huadjyin/home/yinpeng/tnz/NT_model/50M_multi_species_v2/",
                 // "extract_llmr.dataset.dest_path=/home/share/huadjyin/home/s_kangqiang/04_test_output/Output/",
             ]
         },
