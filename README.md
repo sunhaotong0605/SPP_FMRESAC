@@ -33,15 +33,20 @@ Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/Inst
 
 Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
+#### Note
+Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
+
 #### Prediction for target samples.
 ```bash
-python main.py model_name=xxx input_path=xxx output_path=xxx
+python main.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx]
 ```
 `--model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
 `--input_path`: A path of FASTA files, where each FASTA file is a target sample.
 
 `--output_path`: A path for outputting files.
+
+`--pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights folder by default.
 
 Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
 
@@ -55,8 +60,19 @@ The input path can contain one or multiple FASTA files (samples). For each sampl
 
 If a sample's sequence has been segmented, i.e., the Sequence_segments folder has been existed in the output path, sequence segmentation step will be skipped, and existing sequence segments are directly used for prediction. 
 
-#### notice
+#### Note
 Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
+
+#### Train the model on your own dataset.
+
+```bash
+python train.py model_name=xxx input_path=xxx output_path=xxx label_csv_path=xxx
+```
+`--model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+
+`--input_path`: A path of FASTA files, where each FASTA file is a target sample.
+
+`--output_path`: A path for outputting files.
 
 ## License
 MIT License. See [LICENSE](LICENSE.txt) for details.
