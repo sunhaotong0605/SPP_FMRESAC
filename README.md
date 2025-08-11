@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 * Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
-Note: It is recommended to use huggingface_hub to download. Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
+It is recommended to use huggingface_hub to download. Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
 
 #### Prediction for target samples.
 ```bash
