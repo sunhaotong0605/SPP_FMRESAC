@@ -33,22 +33,21 @@ Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/Inst
 
 Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
-#### Note
-Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
+Note: Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
 
 #### Prediction for target samples.
 ```bash
 python main.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx]
 ```
-`--model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+`model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
-`--input_path`: A path of FASTA files, where each FASTA file is a target sample.
+`input_path`: A path of FASTA files, where each FASTA file is a target sample.
 
-`--output_path`: A path for outputting files.
+`output_path`: A path for outputting files.
 
-`--pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights folder by default.
+`pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
 
-Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
+Example: python main.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/
 
 The input path can contain one or multiple FASTA files (samples). For each sample, the output contains <br>
 ├── Sequence_segments: sequence segments <br>
@@ -60,19 +59,39 @@ The input path can contain one or multiple FASTA files (samples). For each sampl
 
 If a sample's sequence has been segmented, i.e., the Sequence_segments folder has been existed in the output path, sequence segmentation step will be skipped, and existing sequence segments are directly used for prediction. 
 
-#### Note
-Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
+Note: Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
 
 #### Train the model on your own dataset.
 
 ```bash
-python train.py model_name=xxx input_path=xxx output_path=xxx label_csv_path=xxx
+python train.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx] label_csv_path=xxx
 ```
-`--model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+`model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
-`--input_path`: A path of FASTA files, where each FASTA file is a target sample.
+`input_path`: A path of FASTA files, where each FASTA file is a train sample.
 
-`--output_path`: A path for outputting files.
+`output_path`: A path for outputting files.
+
+`pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
+
+`label_csv_path`: A CSV file containing labels for training samples in the following format:
+```csv
+sample_name,label
+sample1,1
+sample2,0
+...
+```
+Note: The sample name should not contain a suffix.
+
+Example: python train.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/ label_csv_path=/path/to/labels.csv
+
+The input path can contain one or multiple FASTA files (samples). For each sample, the output contains <br>
+├── Sequence_segments: sequence segments <br>
+├── Engineered_features: engineered features (.pkl) <br>
+├── Foundation_model_representations: foundation model representations (.pkl) <br>
+├── Enhanced_representations: enhanced representations (.pkl) <br>
+├── Model_weights: trained cross-attn weights and stacked aggregation classifier weights <br>
+└── Temp: other required files <br>
 
 ## License
 MIT License. See [LICENSE](LICENSE.txt) for details.
