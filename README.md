@@ -63,7 +63,7 @@ Note: Each prediction involves randomly selecting partial segments from a sample
 
 #### Train the model on your own dataset.
 ```bash
-python train.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx] label_csv_path=xxx
+python train.py model_name=xxx input_path=xxx output_path=xxx label_csv_path=xxx [pretrained_model_path=xxx]
 ```
 * `label_csv_path`: A CSV file containing labels for training samples in the following format:
 ```csv
@@ -74,7 +74,7 @@ GCA_000013785.1_ASM1378v1_genomic,1
 GCA_000006725.1_ASM672v1_genomic,0
 ...
 ```
-Note: The usage of other parameters is the same as when using the model for prediction. In addition to the outputs of prediction, the trained Model_weights folder is also included.
+The usage of other parameters is the same as when using the model for prediction. In addition to the outputs of prediction, the trained Model_weights folder is also included.
 #### Docker
 * First, pull the docker image.
 ```bash
