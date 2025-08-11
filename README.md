@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 * Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
-Note: Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
+Note: It is recommended to use huggingface_hub to download. Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
 
 #### Prediction for target samples.
 ```bash
@@ -72,7 +72,7 @@ sample1,1
 sample2,0
 ...
 ```
-Note: The sample name in csv should not contain a suffix. The usage of other parameters is the same as when using the model for Prediction.
+Note: The sample name in csv should not contain a suffix. The usage of other parameters is the same as when using the model for prediction.
 
 The input path can contain one or multiple FASTA files (samples). In addition to the inference output, the output also includes the Model_weights folder.
 #### Docker
@@ -81,7 +81,7 @@ The input path can contain one or multiple FASTA files (samples). In addition to
 docker login # login to your docker account
 docker pull sunhaotong0605/spp_fmresac:0.0.1
 ```
-* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base). It is recommended to use huggingface_hub to download.
+* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base).
 * Run model prediction.
 ```bash
 docker run --rm --gpus all \
