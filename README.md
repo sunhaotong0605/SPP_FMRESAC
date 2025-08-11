@@ -29,9 +29,9 @@ pip install -r requirements.txt
 
 ## Usage
 #### Foundation model weights.
-Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) to the model_weights/NT_50M/ folder.
+* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) to the model_weights/NT_50M/ folder.
 
-Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
+* Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
 Note: Users can also download the weights to a custom location. However, they will need to specify this path as the `pretrained_model_path` when running the model.
 
@@ -39,13 +39,13 @@ Note: Users can also download the weights to a custom location. However, they wi
 ```bash
 python main.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx]
 ```
-`model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+* `model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
-`input_path`: A path of FASTA files, where each FASTA file is a target sample.
+* `input_path`: A path of FASTA files, where each FASTA file is a target sample.
 
-`output_path`: A path for outputting files.
+* `output_path`: A path for outputting files.
 
-`pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
+* `pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
 
 Example: python main.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/
 
@@ -90,7 +90,7 @@ The input path can contain one or multiple FASTA files (samples). For each sampl
 docker login # login to your docker account
 docker pull sunhaotong0605/spp_fmresac:0.0.1
 ```
-* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base).It is recommended to use huggingface_hub to download.
+* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base). It is recommended to use huggingface_hub to download.
 * Run model prediction.
 ```bash
 docker run --rm --gpus all \
@@ -100,12 +100,12 @@ docker run --rm --gpus all \
   -e INPUT_PATH="/data/input" \
   -e OUTPUT_PATH="/data/output" \
   -e PRETRAINED_MODEL_PATH="/pretrained/model" \
-  train \
+  main \
   sh -c 'python main.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH'
 ```
 * Or run model training.
 ```bash
-docker run --rm \
+docker run --rm --gpus all \
   -v /path/to/input/:/data/input \
   -v /path/to/output/:/data/output \
   -v /path/to/model/:/pretrained/model \
