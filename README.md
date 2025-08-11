@@ -65,7 +65,7 @@ Note: Each prediction involves randomly selecting partial segments from a sample
 ```bash
 python train.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx] label_csv_path=xxx
 ```
-`label_csv_path`: A CSV file containing labels for training samples in the following format:
+* `label_csv_path`: A CSV file containing labels for training samples in the following format:
 ```csv
 sample_name,label
 sample1,1
@@ -74,16 +74,7 @@ sample2,0
 ```
 Note: The sample name in csv should not contain a suffix. The usage of other parameters is the same as when using the model for Prediction.
 
-Example: python train.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/ label_csv_path=/path/to/labels.csv
-
-The input path can contain one or multiple FASTA files (samples). For each sample, the output contains <br>
-├── Sequence_segments: sequence segments <br>
-├── Engineered_features: engineered features (.pkl) <br>
-├── Foundation_model_representations: foundation model representations (.pkl) <br>
-├── Enhanced_representations: enhanced representations (.pkl) <br>
-├── Model_weights: trained cross-attn weights and stacked aggregation classifier weights <br>
-└── Temp: other required files <br>
-
+The input path can contain one or multiple FASTA files (samples). In addition to the inference output, the output also includes the Model_weights folder.
 #### Docker
 * First, pull the docker image.
 ```bash
