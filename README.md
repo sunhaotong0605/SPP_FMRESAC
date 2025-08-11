@@ -68,13 +68,13 @@ python train.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_
 * `label_csv_path`: A CSV file containing labels for training samples in the following format:
 ```csv
 sample_name,label
-sample1,1
-sample2,0
+GCA_001549735.1_XFAS004-SEQ-2-ASM-1_genomic,0
+GCA_905311425.2_NRS6105B_genomic,1
+GCA_000013785.1_ASM1378v1_genomic,1
+GCA_000006725.1_ASM672v1_genomic,0
 ...
 ```
-Note: The sample name in csv should not contain a suffix. The usage of other parameters is the same as when using the model for prediction.
-
-The input path can contain one or multiple FASTA files (samples). In addition to the inference output, the output also includes the Model_weights folder.
+Note: The usage of other parameters is the same as when using the model for prediction. In addition to the outputs of prediction, the trained Model_weights folder is also included.
 #### Docker
 * First, pull the docker image.
 ```bash
