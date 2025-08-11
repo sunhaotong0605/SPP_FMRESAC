@@ -38,10 +38,10 @@ It is recommended to use huggingface_hub to download. Users can also download th
 #### Prediction for target samples.
 ```bash
 python main.py \
-  model_name=NT_50M \ # "NT_50M" or "EVO_7B"
-  input_path=/path/to/input/ \
-  output_path=/path/to/output/ \
-  [pretrained_model_path=/path/to/model/]
+    model_name=NT_50M \ # "NT_50M" or "EVO_7B"
+    input_path=/path/to/input/ \
+    output_path=/path/to/output/ \
+    [pretrained_model_path=/path/to/model/]
 ```
 * `model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
@@ -50,8 +50,6 @@ python main.py \
 * `output_path`: A path for outputting files.
 
 * `pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
-
-Example: python main.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/
 
 The input path can contain one or multiple FASTA files (samples). For each sample, the output contains <br>
 ├── Sequence_segments: sequence segments <br>
@@ -67,7 +65,12 @@ Note: Each prediction involves randomly selecting partial segments from a sample
 
 #### Train the model on your own dataset.
 ```bash
-python train.py model_name=xxx input_path=xxx output_path=xxx label_csv_path=xxx [pretrained_model_path=xxx]
+python train.py \
+    model_name=NT_50M \ # "NT_50M" or "EVO_7B"
+    input_path=/path/to/input/ \
+    output_path=/path/to/output/ \
+    label_csv_path=/path/to/label.csv \
+    [pretrained_model_path=/path/to/model/]
 ```
 * `label_csv_path`: A CSV file containing labels for training samples in the following format:
 ```csv
@@ -89,28 +92,28 @@ docker pull sunhaotong0605/spp_fmresac:0.0.1
 * Run model prediction.
 ```bash
 docker run --rm --gpus all \
-  -v /path/to/input/:/data/input \
-  -v /path/to/output/:/data/output \
-  -v /path/to/model/:/pretrained/model \
-  -e INPUT_PATH="/data/input" \
-  -e OUTPUT_PATH="/data/output" \
-  -e PRETRAINED_MODEL_PATH="/pretrained/model" \
-  spp_fmresac \
-  sh -c 'python main.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH'
+    -v /path/to/input/:/data/input \
+    -v /path/to/output/:/data/output \
+    -v /path/to/model/:/pretrained/model \
+    -e INPUT_PATH="/data/input" \
+    -e OUTPUT_PATH="/data/output" \
+    -e PRETRAINED_MODEL_PATH="/pretrained/model" \
+    spp_fmresac \
+    sh -c 'python main.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH'
 ```
 * Or run model training.
 ```bash
 docker run --rm --gpus all \
-  -v /path/to/input/:/data/input \
-  -v /path/to/output/:/data/output \
-  -v /path/to/model/:/pretrained/model \
-  -v /path/to/label.csv:/label/csv \
-  -e INPUT_PATH="/data/input" \
-  -e OUTPUT_PATH="/data/output" \
-  -e PRETRAINED_MODEL_PATH="/pretrained/model" \
-  -e LABEL_CSV_PATH="/label/csv" \
-  spp_fmresac \
-  sh -c 'python train.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH label_csv_path=$LABEL_CSV_PATH'
+    -v /path/to/input/:/data/input \
+    -v /path/to/output/:/data/output \
+    -v /path/to/model/:/pretrained/model \
+    -v /path/to/label.csv:/label/csv \
+    -e INPUT_PATH="/data/input" \
+    -e OUTPUT_PATH="/data/output" \
+    -e PRETRAINED_MODEL_PATH="/pretrained/model" \
+    -e LABEL_CSV_PATH="/label/csv" \
+    spp_fmresac \
+    sh -c 'python train.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH label_csv_path=$LABEL_CSV_PATH'
 ```
 Please replace `/path/to/input/`, `/path/to/output/`, `/path/to/model/`and `/path/to/label.csv` with your own path. `model_name` can be "NT_50M" or "EVO_7B".
 
