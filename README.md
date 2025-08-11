@@ -37,7 +37,11 @@ It is recommended to use huggingface_hub to download. Users can also download th
 
 #### Prediction for target samples.
 ```bash
-python main.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx]
+python main.py \
+  model_name=NT_50M \ # "NT_50M" or "EVO_7B"
+  input_path=/path/to/input/ \
+  output_path=/path/to/output/ \
+  [pretrained_model_path=/path/to/model/]
 ```
 * `model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
