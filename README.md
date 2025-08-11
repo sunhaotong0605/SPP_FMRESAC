@@ -62,18 +62,9 @@ If a sample's sequence has been segmented, i.e., the Sequence_segments folder ha
 Note: Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
 
 #### Train the model on your own dataset.
-
 ```bash
 python train.py model_name=xxx input_path=xxx output_path=xxx [pretrained_model_path=xxx] label_csv_path=xxx
 ```
-`model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
-
-`input_path`: A path of FASTA files, where each FASTA file is a train sample.
-
-`output_path`: A path for outputting files.
-
-`pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
-
 `label_csv_path`: A CSV file containing labels for training samples in the following format:
 ```csv
 sample_name,label
@@ -81,7 +72,7 @@ sample1,1
 sample2,0
 ...
 ```
-Note: The sample name should not contain a suffix.
+Note: The sample name in csv should not contain a suffix. The usage of other parameters is the same as when using the model for Prediction.
 
 Example: python train.py model_name=NT_50M input_path=/path/to/input/ output_path=/path/to/output/ label_csv_path=/path/to/labels.csv
 
@@ -92,6 +83,41 @@ The input path can contain one or multiple FASTA files (samples). For each sampl
 ├── Enhanced_representations: enhanced representations (.pkl) <br>
 ├── Model_weights: trained cross-attn weights and stacked aggregation classifier weights <br>
 └── Temp: other required files <br>
+
+#### Docker
+* First, pull the docker image.
+```bash
+docker login # login to your docker account
+docker pull sunhaotong0605/spp_fmresac:0.0.1
+```
+* Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base).It is recommended to use huggingface_hub to download.
+* Run model prediction.
+```bash
+docker run --rm --gpus all \
+  -v /path/to/input/:/data/input \
+  -v /path/to/output/:/data/output \
+  -v /path/to/model/:/pretrained/model \
+  -e INPUT_PATH="/data/input" \
+  -e OUTPUT_PATH="/data/output" \
+  -e PRETRAINED_MODEL_PATH="/pretrained/model" \
+  train \
+  sh -c 'python main.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH'
+```
+* Or run model training.
+```bash
+docker run --rm \
+  -v /path/to/input/:/data/input \
+  -v /path/to/output/:/data/output \
+  -v /path/to/model/:/pretrained/model \
+  -v /path/to/label.csv:/label/csv \
+  -e INPUT_PATH="/data/input" \
+  -e OUTPUT_PATH="/data/output" \
+  -e PRETRAINED_MODEL_PATH="/pretrained/model" \
+  -e LABEL_CSV_PATH="/label/csv" \
+  train \
+  sh -c 'python train.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH label_csv_path=$LABEL_CSV_PATH'
+```
+Please replace `/path/to/input/`, `/path/to/output/`, `/path/to/model/`and `/path/to/label.csv` with your own path.
 
 ## License
 MIT License. See [LICENSE](LICENSE.txt) for details.
