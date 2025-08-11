@@ -37,11 +37,11 @@ Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8
 ```bash
 python main.py model_name=xxx input_path=xxx output_path=xxx
 ```
---model_name: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+`--model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
---input_path: A path of FASTA files, where each FASTA file is a target sample.
+`--input_path`: A path of FASTA files, where each FASTA file is a target sample.
 
---output_path: A path for outputting files.
+`--output_path`: A path for outputting files.
 
 Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
 
