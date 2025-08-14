@@ -94,7 +94,6 @@ By default, 60% of the training samples are randomly selected to train the cross
 #### Docker
 * First, pull the docker image.
 ```bash
-docker login # login to your docker account
 docker pull sunhaotong0605/spp_fmresac:0.0.1
 ```
 * Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) and [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base).
