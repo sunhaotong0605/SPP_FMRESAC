@@ -43,7 +43,6 @@ exceptiongroup==1.2.2
 executing==2.1.0
 fastjsonschema==2.20.0
 filelock==3.13.1
-flash-attn==2.5.6
 fonttools==4.53.0
 fqdn==1.5.1
 frozenlist==1.4.1
@@ -204,3 +203,4 @@ xgboost==2.1.0
 xxhash==3.4.1
 yarl==1.9.4
 zipp==3.19.2
+flash-attn==2.5.6
