@@ -1,13 +1,13 @@
 # Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier
 
 ## Introduction
-We utilize genomic foundation models to generate representations from samples’ sequences, and then, enhance them by deeply integrating domain-specific engineered features. The enhanced representations enable training a powerful classifier for a target task. We also design a stacked aggregation classifier. It predicts the label of a sample with only leveraging partial sequence segments from this sample, effectively addressing the challenges in processing long sequences. The proposed method is applied on prediction of soil probiotics.
+We use genomic foundation models to generate representations from samples’ sequences, and then, enhance them by deeply integrating domain-specific engineered features based on the cross-attention mechanism. The enhanced representations enable training a powerful classifier for a target task. We also design a stacked aggregation classifier. It predicts the label of a sample with only leveraging a subset of sequence segments from this sample, effectively addressing the challenges in processing long or incompletely assembled sequences. The proposed method is applied on prediction of soil probiotics.
 
 ## Schematic Diagram
 <div style="text-align: center;">
     <img src="img/fig1.jpg" alt="fig1" width="493" height="725">
 </div>
-Figure 1. Overview of the proposed method. The genomic sequence of a bacterial sample is divided into segments. Its partial segments are input into a pre-trained foundation model to generate representations, and engineered features are extracted from these segments. The foundation model representation and engineered feature vectors are aligned, and then, the foundation model representations are enhanced by deeply integrating the engineered features. The enhanced representations are fed into the stacked aggregation classifier. The first-level classifier processes each enhanced representation to obtain a score. All scores are aggregated into a vector, which is input into the second-level classifier to output the final label and score.
+Figure 1. Overview of the proposed method. The genomic sequence of a bacterial sample is split into segments. A subset of segments is input into a pre-trained foundation model to generate representations, while engineered features are extracted from these segments. The foundation model representations and engineered features are aligned, after which the foundation model representations are enhanced by deeply integrating the engineered features via the cross-attention mechanism. The stacked aggregation classifier comprises two sub-models. The first-level model processes each segment’s enhanced representations to obtain a score. All scores are aggregated into a vector, which is input into the second-level model to output the predicted label (probiotic or non-probiotic) and confidence score.
 
 ## Quick Start
 
@@ -72,7 +72,15 @@ python train.py \
     label_csv_path=/path/to/label.csv \
     [pretrained_model_path=/path/to/model/]
 ```
-* `label_csv_path`: A CSV file containing labels for training samples in the following format:
+* `model_name`: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+
+* `input_path`: A path of FASTA files, where each FASTA file is a training sample.
+
+* `output_path`: A path for outputting files.
+
+* `pretrained_model_path`: A path for pretrained foundation model weights. When the value is empty, the weights are read from model_weights/NT_50M/ or model_weights/EVO_7B/ folder by default.
+
+* `label_csv_path`: A CSV file containing sample names and labels of the training samples in the following format:
 ```csv
 sample_name,label
 GCA_001549735.1_XFAS004-SEQ-2-ASM-1_genomic,0
@@ -81,7 +89,8 @@ GCA_000013785.1_ASM1378v1_genomic,1
 GCA_000006725.1_ASM672v1_genomic,0
 ...
 ```
-The usage of other parameters is the same as when using the model for prediction. In addition to the outputs of prediction, the trained Model_weights folder is also included.
+By default, 60% of the training samples are randomly selected to train the cross-attention mechanism, and the remaining training samples are used to train the stacked aggregation classifier. The trained weights are then saved to the output path.
+
 #### Docker
 * First, pull the docker image.
 ```bash
