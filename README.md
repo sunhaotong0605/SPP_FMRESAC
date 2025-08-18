@@ -106,7 +106,7 @@ docker run --rm --gpus all \
     -e INPUT_PATH="/data/input" \
     -e OUTPUT_PATH="/data/output" \
     -e PRETRAINED_MODEL_PATH="/pretrained/model" \
-    spp_fmresac \
+    sunhaotong0605/spp_fmresac:0.0.1 \
     sh -c 'python main.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH'
 ```
 * Or run model training.
@@ -120,7 +120,7 @@ docker run --rm --gpus all \
     -e OUTPUT_PATH="/data/output" \
     -e PRETRAINED_MODEL_PATH="/pretrained/model" \
     -e LABEL_CSV_PATH="/label/csv" \
-    spp_fmresac \
+    sunhaotong0605/spp_fmresac:0.0.1 \
     sh -c 'python train.py model_name=NT_50M input_path=$INPUT_PATH output_path=$OUTPUT_PATH pretrained_model_path=$PRETRAINED_MODEL_PATH label_csv_path=$LABEL_CSV_PATH'
 ```
 Please replace `/path/to/input/`, `/path/to/output/`, `/path/to/model/`and `/path/to/label.csv` with your own path. `model_name` can be "NT_50M" or "EVO_7B".
