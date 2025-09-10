@@ -15,7 +15,7 @@ Figure 1. Overview of the proposed method. The genomic sequence of a bacterial s
 [Download](https://github.com/sunhaotong0605/SPP_FMRESAC/archive/refs/heads/main.zip) this GitHub repository, and extract the contents into a folder.
 
 ### Data Description
-The proposed method requires data in [FASTA](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) format as input. All data used will be made public as a supplementary table after the paper is accepted.
+The proposed method requires data in [FASTA](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) format as input. All data are collected and downloaded from the National Center for Biotechnology Information (NCBI). In addition, we also provide data sets for download from [Zenodo](https://zenodo.org/records/17067025).
 
 ## Install
 ```bash
