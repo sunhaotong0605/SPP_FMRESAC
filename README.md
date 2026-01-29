@@ -129,4 +129,4 @@ Please replace `/path/to/input/`, `/path/to/output/`, `/path/to/model/`and `/pat
 MIT License. See [LICENSE](LICENSE.txt) for details.
 
 ## Citation
-Kang Q, Sun H, Wang Y, et al. Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier. bioRxiv. doi:https://doi.org/10.1101/2025.06.13.659431.
+Kang Q, Sun H, Wang Y, et al. Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier[J]. Briefings in Bioinformatics, 2025, 26(5): bbaf567.
