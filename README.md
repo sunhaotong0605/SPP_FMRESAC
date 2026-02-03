@@ -126,7 +126,7 @@ docker run --rm --gpus all \
 Please replace `/path/to/input/`, `/path/to/output/`, `/path/to/model/`and `/path/to/label.csv` with your own path. `model_name` can be "NT_50M" or "EVO_7B".
 
 ## License
-MIT License. See [LICENSE](LICENSE.txt) for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Citation
 Kang Q, Sun H, Wang Y, et al. Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier[J]. Briefings in Bioinformatics, 2025, 26(5): bbaf567.
